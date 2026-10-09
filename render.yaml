@@ -1,0 +1,30 @@
+# Render Blueprint for TechMart Empire: Ultra Simulator
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Saves are written to SAVE_DIR. On the free plan the disk is ephemeral, so the
+# server copy of a save can disappear after a redeploy/restart; the game also keeps
+# a copy in the player's browser (localStorage) so progress is not lost.
+# To keep server saves permanently, switch to a paid plan, uncomment the "disk"
+# block below and set SAVE_DIR to the disk mount path.
+services:
+  - type: web
+    name: techmart-empire
+    runtime: node
+    plan: free
+    region: oregon
+    branch: main
+    autoDeploy: true
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 20.11.1
+      - key: NODE_ENV
+        value: production
+      - key: SAVE_DIR
+        value: /tmp/techmart-saves
+    # disk:
+    #   name: techmart-saves
+    #   mountPath: /var/data
+    #   sizeGB: 1

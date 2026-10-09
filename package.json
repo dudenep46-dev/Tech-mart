@@ -1,0 +1,19 @@
+{
+  "name": "techmart-empire",
+  "version": "1.0.0",
+  "description": "TechMart Empire: Ultra Simulator - a lightweight mobile shop and supermarket management game for web browsers.",
+  "main": "server.js",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

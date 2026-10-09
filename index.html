@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="TechMart Empire: Ultra Simulator - repair phones, run a supermarket, build your retail empire.">
+  <title>TechMart Empire: Ultra Simulator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+  <!-- ============================== HUD ============================== -->
+  <header id="hud">
+    <div class="hud-row">
+      <div class="chip">
+        <span class="chip-l">CASH</span>
+        <b id="hudCash">$0</b>
+      </div>
+      <div class="chip">
+        <span class="chip-l">DAY <b id="hudDay">1</b></span>
+        <b id="hudClock">8:00 AM</b>
+      </div>
+      <div class="chip">
+        <span class="chip-l">HAPPINESS</span>
+        <b><span id="hudHappyIco">🙂</span> <span id="hudHappy">75</span>%</b>
+        <div class="bar"><i id="hudHappyBar"></i></div>
+      </div>
+      <div class="chip">
+        <span class="chip-l">STORE LV <b id="hudLevel">1</b></span>
+        <small id="hudXpText">0 / 60 XP</small>
+        <div class="bar xp"><i id="hudXpBar"></i></div>
+      </div>
+    </div>
+    <div class="hud-sub">
+      <span id="hudStore" class="store-name">TechMart</span>
+      <span id="phaseBadge" class="badge" hidden></span>
+      <button id="btnSound" class="snd-btn" type="button" aria-label="Toggle sound">🔊</button>
+    </div>
+  </header>
+
+  <!-- ============================== STAGE ============================== -->
+  <main id="stage">
+    <canvas id="gameCanvas" aria-label="Store view"></canvas>
+    <div id="toasts" aria-live="polite"></div>
+    <div id="fps">-- FPS</div>
+  </main>
+
+  <!-- ============================== DOCK ============================== -->
+  <nav id="dock">
+    <button class="dbtn" data-action="openWorkbench"><span>🔧</span><small>Workbench</small></button>
+    <button class="dbtn" data-action="openOrders"><span>📦</span><small>Orders</small></button>
+    <button class="dbtn dbtn-main" id="btnCheckout" data-action="checkout"><span>💳</span><small>Checkout</small></button>
+    <button class="dbtn" data-action="openShop"><span>🏪</span><small>Shop</small></button>
+    <button class="dbtn" id="btnSpeed" data-action="speed"><span>⏩</span><small>1x</small></button>
+  </nav>
+</div>
+
+<!-- ============================== MODAL: REPAIR WORKBENCH ============================== -->
+<div id="modalWorkbench" class="modal" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>🔧 Repair Workbench</h2>
+      <button class="x" data-action="close" data-modal="workbench" aria-label="Close">✕</button>
+    </div>
+    <div class="tabs" id="wbTabs"></div>
+    <div class="modal-body" id="wbBody"></div>
+    <div id="repairOverlay" class="overlay" hidden>
+      <div class="overlay-card">
+        <h3 id="repairTitle">Repair</h3>
+        <div id="repairStage" class="mg-wrap"></div>
+        <button class="btn btn-ghost w-full" data-action="giveUp">Give up (part is lost)</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== MODAL: SHOP CUSTOMIZATION ============================== -->
+<div id="modalShop" class="modal" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>🏪 Shop Management</h2>
+      <button class="x" data-action="close" data-modal="shop" aria-label="Close">✕</button>
+    </div>
+    <div class="tabs" id="shTabs"></div>
+    <div class="modal-body" id="shBody"></div>
+  </div>
+</div>
+
+<!-- ============================== MODAL: INVENTORY ORDERING ============================== -->
+<div id="modalOrders" class="modal" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>📦 Inventory Ordering</h2>
+      <button class="x" data-action="close" data-modal="orders" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="orBody"></div>
+  </div>
+</div>
+
+<!-- ============================== MODAL: DAILY REPORT ============================== -->
+<div id="modalReport" class="modal" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>📊 Daily Report</h2>
+    </div>
+    <div class="modal-body" id="rpBody"></div>
+  </div>
+</div>
+
+<!-- ============================== MODAL: INTRO ============================== -->
+<div id="modalIntro" class="modal" hidden>
+  <div class="modal-card intro">
+    <div class="intro-art">📱🛒</div>
+    <h1>TechMart Empire</h1>
+    <p class="intro-sub">Ultra Simulator</p>
+    <p class="intro-text">Fix broken phones, stock your shelves, serve your customers and grow from a tiny repair stall into a retail empire.</p>
+    <label class="field">
+      <span>Name your store</span>
+      <input id="introName" type="text" maxlength="18" value="TechMart" autocomplete="off">
+    </label>
+    <div class="intro-actions">
+      <button id="btnContinue" class="btn btn-primary btn-lg" data-action="introContinue" hidden>▶ Continue</button>
+      <button id="btnNew" class="btn btn-accent btn-lg" data-action="introNew">✨ New Game</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== MODAL: GAME OVER ============================== -->
+<div id="modalGameover" class="modal" hidden>
+  <div class="modal-card intro">
+    <div class="intro-art">📉</div>
+    <h1>Bankrupt!</h1>
+    <p class="intro-text">Your debts grew too large and the bank closed the shop. Every empire has a rough start - try again with a smarter plan.</p>
+    <div class="intro-actions">
+      <button class="btn btn-accent btn-lg" data-action="restart">🔄 Start over</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/gameEngine.js"></script>
+<script src="js/render3d.js"></script>
+<script src="js/mobileShop.js"></script>
+<script src="js/supermarket.js"></script>
+<script src="js/uiController.js"></script>
+<script src="js/audio.js"></script>
+<script src="https://sdk.crazygames.com/crazygames-sdk-v3.js" async onerror="void 0"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
